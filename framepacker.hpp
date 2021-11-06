@@ -153,13 +153,13 @@ struct rect {
 };
 
 std::ostream &operator << (std::ostream &s, const vec2 &r) {
-	s << "{" << r.x << "," << r.y << "}";
+	s << "[" << r.x << "," << r.y << "]";
 
 	return s;
 }
 
 std::ostream &operator << (std::ostream &s, const rect &r) {
-	s << "{" << r.min << "," << r.size() << "}";
+	s << "[" << r.min << "," << r.size() << "]";
 
 	return s;
 }
@@ -328,11 +328,11 @@ struct block {
 		vec2 loc = fit->min;
 		frame.min = loc;
 		frame.max = loc + valid.size() - vec2(1, 1);
-		s << get_indent(indent) << "frame : " << "\"" << frame.add(padding) << "\"" << "," << std::endl;
-		s << get_indent(indent) << "offset : " << "\"" << vec2() << "\"" << "," << std::endl;
-		s << get_indent(indent) << "rotated : " << "false" << "," << std::endl;
-		s << get_indent(indent) << "sourceColorRect : " << "\"" << valid << "\"" << "," << std::endl;
-		s << get_indent(indent) << "sourceSize : " << "\"" << vec2(texture->width(), texture->height()) << "\"" << std::endl;
+		s << get_indent(indent) << "\"frame\" :" << frame.add(padding) << "," << std::endl;
+		s << get_indent(indent) << "\"offset\":" << vec2() << "," << std::endl;
+		s << get_indent(indent) << "\"rotated\":" << "false" << "," << std::endl;
+		s << get_indent(indent) << "\"sourceColorRect\":" << valid << "," << std::endl;
+		s << get_indent(indent) << "\"sourceSize\":" << vec2(texture->width(), texture->height()) << std::endl;
 		indent--;
 	}
 
@@ -447,13 +447,13 @@ public:
 		s << "{" << std::endl;
 		{
 			indent++;
-			s << get_indent() << "frames : {" << std::endl;
+			s << get_indent() << "\"frames\": {" << std::endl;
 			{
 				indent++;
 				unsigned int i = 0;
 				for (auto it = p.begin(); it != p.end(); ++it) {
 					const block_type &blk = it->second;
-					s << get_indent() << blk.name << " : {" << std::endl;
+					s << get_indent() << "\"" << blk.name << "\" : {" << std::endl;
 					blk.write_meta(s, indent, padding);
 					if (i == p.size() - 1)
 						s << get_indent() << "}" << std::endl;
@@ -468,11 +468,11 @@ public:
 		}
 		{
 			indent++;
-			s << get_indent() << "metadata : {" << std::endl;
+			s << get_indent() << "\"metadata\": {" << std::endl;
 			{
 				indent++;
-				s << get_indent() << "textureName : " << n << "," << std::endl;
-				s << get_indent() << "size : " << "\"" << vec2(t->width(), t->height()) << "\"" << std::endl;
+				s << get_indent() << "\"textureName\" : \"" << n << "\"," << std::endl;
+				s << get_indent() << "\"size\" : " << vec2(t->width(), t->height()) << std::endl;
 				indent--;
 			}
 			s << get_indent() << "}" << std::endl;
@@ -554,7 +554,7 @@ public:
 				} else {
 					result->copy_from(
 						*blk.texture.get(),
-						blk.valid.min_x(), blk.texture->height() - blk.valid.min_y() - blk.valid.height(),
+						blk.valid.min_x(), blk.texture->height() - blk.valid.min_y() - blk.valid.height() - 1,
 						blk.valid.width(), blk.valid.height(),
 						blk.fit->min_x() + padding, blk.fit->min_y() + padding
 					);
